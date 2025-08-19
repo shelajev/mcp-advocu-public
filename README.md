@@ -1,62 +1,60 @@
-# mcp-advocu-public
+# Advocu MCP Server
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+This project provides a [Model-Centric Programming (MCP) server](https://docs.quarkiverse.io/quarkus-mcp-server/dev/index.html) for submitting activities to [Advocu](https://advocu.com/). It exposes a set of tools that can be called by an MCP client to create activity drafts in your Advocu account.
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+![Inspector View](inspector-view.png)
 
-## Running the application in dev mode
+## Running the Application
 
-You can run your application in dev mode that enables live coding using:
+The easiest way to run the Advocu MCP Server is by using the pre-built Docker container available on Docker Hub.
+
+### Prerequisites
+
+- Docker installed on your machine.
+- Your Advocu Personal API Token.
+- Your Advocu Submission ID.
+
+### Running the Docker Container
+
+To run the container, you need to map port 8080 and provide your Advocu credentials as environment variables.
 
 ```shell script
-./mvnw quarkus:dev
+docker run -p 8080:8080 \
+  -e ADVOCU_API_TOKEN="YOUR_ADVOCU_API_TOKEN" \
+  -e ADVOCU_SUBMISSION_ID="YOUR_ADVOCU_SUBMISSION_ID" \
+  olegselajev241/mcp-advocu-submissions:latest
 ```
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
+Replace `"YOUR_ADVOCU_API_TOKEN"` and `"YOUR_ADVOCU_SUBMISSION_ID"` with your actual credentials.
 
-## Packaging and running the application
+### Connecting to the MCP Server
 
-The application can be packaged using:
+Once the container is running, you can connect to the MCP server using an SSE (Server-Sent Events) client. The server URL is:
+
+`http://localhost:8080/mcp/sse`
+
+## Available Tools
+
+The following tools are available through the MCP server:
+
+- `feedbackSession`: Submit a feedback session.
+- `resources`: Submit a resource (e.g., blog post, article).
+- `publicSpeaking`: Submit a public speaking engagement.
+- `event`: Submit an event you organized.
+- `amplification`: Submit a social media amplification.
+- `githubRepository`: Submit a GitHub repository.
+- `youtubeVideo`: Submit a YouTube video.
+
+## Building from Source
+
+If you prefer to build the project from source, you can use the following Maven command:
 
 ```shell script
 ./mvnw package
 ```
 
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
-
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
-
-If you want to build an _über-jar_, execute the following command:
+To build the container image locally:
 
 ```shell script
-./mvnw package -Dquarkus.package.jar.type=uber-jar
+./mvnw package -DskipTests=true -Dquarkus.container-image.build=true
 ```
-
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
-
-## Creating a native executable
-
-You can create a native executable using:
-
-```shell script
-./mvnw package -Dnative
-```
-
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
-
-```shell script
-./mvnw package -Dnative -Dquarkus.native.container-build=true
-```
-
-You can then execute your native executable with: `./target/mcp-advocu-public-1.0.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/maven-tooling>.
-
-## Provided Code
-
-### REST
-
-Easily start your REST Web Services
-
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
